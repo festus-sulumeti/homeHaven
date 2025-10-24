@@ -2,6 +2,7 @@ import { Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import heroHouse from "@/assets/hero-house.jpg";
 import NavbarPage from "./Navbar";
+import FooterSection from "./Footer";
 
 const Hero = () => {
   return (
@@ -49,6 +50,8 @@ const Hero = () => {
         
         </div>
         </section>
+
+        <FooterSection />
     
     </>
 
