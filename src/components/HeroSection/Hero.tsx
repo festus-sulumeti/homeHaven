@@ -11,6 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import heroHouse from "@/assets/hero-house.jpg";
 import NavbarPage from "./Navbar";
+import Features from "./Features";
 import FooterSection from "./Footer";
 
 
@@ -113,6 +114,7 @@ const Hero = () => {
         
         </div>
         </section>
+        <Features />
 
         <FooterSection />
     
