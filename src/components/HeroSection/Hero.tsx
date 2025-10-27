@@ -13,6 +13,7 @@ import heroHouse from "@/assets/hero-house.jpg";
 import NavbarPage from "./Navbar";
 import Features from "./Features";
 import FeaturedProperties from "./FeaturedProperties";
+import WorkIt from "./HowItWorks";
 import CTA from "./CTA";
 import FooterSection from "./Footer";
 
@@ -121,6 +122,7 @@ const Hero = () => {
         </section>
         <Features />
         <FeaturedProperties />
+        <WorkIt />
         <CTA />
 
         <FooterSection />
