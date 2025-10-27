@@ -13,6 +13,7 @@ import heroHouse from "@/assets/hero-house.jpg";
 import NavbarPage from "./Navbar";
 import Features from "./Features";
 import FeaturedProperties from "./FeaturedProperties";
+import CTA from "./CTA";
 import FooterSection from "./Footer";
 
 
@@ -20,7 +21,10 @@ const Hero = () => {
   return (
 
     <>
-        <NavbarPage />
+
+    <div className="min-h-screen bg-background">
+
+      <NavbarPage />
         <section className="min-h-screen pt-32 pb-16 px-6 lg:px-12">
         <div className="container mx-auto">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -117,12 +121,12 @@ const Hero = () => {
         </section>
         <Features />
         <FeaturedProperties />
+        <CTA />
 
         <FooterSection />
-    
-    </>
+    </div>    
 
-    
+    </>    
   );
 };
 
