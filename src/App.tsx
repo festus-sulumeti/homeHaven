@@ -1,5 +1,6 @@
 import { Routes, Route } from  'react-router-dom'
 import Hero from './components/HeroSection/Hero'
+import Login from './Pages/Login'
 
 function App() {
  
@@ -8,6 +9,7 @@ function App() {
     <>
       <Routes>
         <Route path="/" element={<Hero />} />
+        <Route path="/login" element={<Login />} />
       </Routes>
     </>
   )
