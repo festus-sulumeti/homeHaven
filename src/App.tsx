@@ -2,7 +2,7 @@ import { Routes, Route } from 'react-router-dom'
 import Hero from './components/HeroSection/Hero'
 import Login from './Pages/Login'
 import Signup from './Pages/Signup'
-import Dashboard from './Pages/Dashboard'
+import Dashboard from './Dashboard/Dashboard'
 
 
 function App() {
