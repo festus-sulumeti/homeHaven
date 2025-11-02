@@ -1,11 +1,12 @@
-import { Routes, Route } from  'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 import Hero from './components/HeroSection/Hero'
 import Login from './Pages/Login'
 import Signup from './Pages/Signup'
+import Dashboard from './Pages/Dashboard'
 
 
 function App() {
- 
+
 
   return (
     <>
@@ -13,6 +14,7 @@ function App() {
         <Route path="/" element={<Hero />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
     </>
   )
