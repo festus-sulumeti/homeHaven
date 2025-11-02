@@ -1,24 +1,21 @@
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   Field,
   FieldDescription,
   FieldGroup,
   FieldLabel,
-} from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import { Link, useNavigate } from "react-router-dom"
-import { useState } from "react"
-
-// MongoDB URI from environment variables
-const MONGODB_URI = import.meta.env.VITE_MONGODB_URI || import.meta.env.MONGODB_URI || "";
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 export function LoginForm({
   className,
@@ -38,7 +35,8 @@ export function LoginForm({
     const password = formData.get("password") as string;
 
     try {
-      const apiUrl = import.meta.env.VITE_API_URL;
+      const apiUrl =
+        import.meta.env.VITE_API_URL || "http://localhost:5000/api";
       const response = await fetch(`${apiUrl}/auth/login`, {
         method: "POST",
         headers: {
@@ -47,30 +45,50 @@ export function LoginForm({
         body: JSON.stringify({
           email,
           password,
-          mongodbUri: MONGODB_URI, // MongoDB URI (typically used on backend)
+          // Removed mongodbUri - backend handles this
         }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        setErrorMsg(data.message || "Invalid email or password. Please try again.");
+        setErrorMsg(
+          data.message || "Invalid email or password. Please try again."
+        );
         setLoading(false);
         return;
       }
 
       // Store token if provided
-      if (data.token) {
-        localStorage.setItem("token", data.token);
+      if (data.data?.token) {
+        localStorage.setItem("token", data.data.token);
+        localStorage.setItem("user", JSON.stringify(data.data.user));
       }
 
-      // Navigate to dashboard on success
-      navigate("/dashboard");
+      // Navigate to appropriate dashboard based on role
+      if (data.data?.redirectTo) {
+        navigate(data.data.redirectTo);
+      } else {
+        // Default redirect based on user role
+        const userRole = data.data?.user?.role;
+        if (userRole === "admin" || userRole === "super_admin") {
+          navigate("/admin/dashboard");
+        } else {
+          navigate("/user/dashboard");
+        }
+      }
     } catch (err) {
-      console.error(err);
-      setErrorMsg("An unexpected error occurred. Please check your connection and try again.");
+      console.error("Login error:", err);
+      setErrorMsg(
+        "An unexpected error occurred. Please check your connection and try again."
+      );
       setLoading(false);
     }
+  };
+
+  const handleGoogleLogin = () => {
+    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+    window.location.href = `${apiUrl}/auth/google`;
   };
 
   return (
@@ -87,7 +105,9 @@ export function LoginForm({
             {/* Error Messages */}
             {errorMsg && (
               <div className="rounded-md bg-destructive/10 border border-destructive/20 p-3">
-                <p className="text-destructive text-sm text-center">{errorMsg}</p>
+                <p className="text-destructive text-sm text-center">
+                  {errorMsg}
+                </p>
               </div>
             )}
 
@@ -130,6 +150,7 @@ export function LoginForm({
                   type="button"
                   disabled={loading}
                   className="w-full"
+                  onClick={handleGoogleLogin}
                 >
                   Login with Google
                 </Button>
@@ -148,5 +169,5 @@ export function LoginForm({
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
