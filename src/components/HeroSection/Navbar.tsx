@@ -1,4 +1,6 @@
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
+
 
 const Navigation = () => {
   return (
@@ -22,7 +24,9 @@ const Navigation = () => {
           </div>
           
           <Button size="default">
-            Login
+            <Link to="/login">
+                <span>Login</span>
+            </Link>
           </Button>
         </div>
       </div>
