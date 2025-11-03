@@ -42,13 +42,13 @@ import {
   SidebarTrigger
 } from '@/components/ui/sidebar'
 
-import LanguageDropdown from '@/Dashboard/dropdown-language'
-import ProductInsightsCard from '@/Dashboard/widget-product-insights'
-import ProfileDropdown from '@/Dashboard/dropdown-profile'
-import SalesMetricsCard from '@/Dashboard/chart-sales-metrics'
-import StatisticsCard from '@/Dashboard/statistics-card-01'
-import TotalEarningCard from '@/Dashboard/widget-total-earning'
-import TransactionDatatable, { type Item } from '@/Dashboard/datatable-transaction'
+import LanguageDropdown from '@/user/dashboard/dropdown-language'
+import ProductInsightsCard from '@/user/dashboard/widget-product-insights'
+import ProfileDropdown from '@/user/dashboard/dropdown-profile'
+import SalesMetricsCard from '@/user/dashboard/chart-sales-metrics'
+import StatisticsCard from '@/user/dashboard/statistics-card-01'
+import TotalEarningCard from '@/user/dashboard/widget-total-earning'
+import TransactionDatatable, { type Item } from '@/user/dashboard/datatable-transaction'
 
 // --- Tenant & Property Types ---
 type Tenant = {
@@ -363,7 +363,7 @@ const transactionData: Item[] = [
   }
 ]
 
-const DashboardShell = () => {
+const UserDashboardShell = () => {
   // --- State ---
   const [tenant, setTenant] = useState<Tenant | null>(null)
   const [currentProperty, setCurrentProperty] = useState<Property | null>(null)
@@ -778,4 +778,4 @@ const DashboardShell = () => {
   )
 }
 
-export default DashboardShell
+export default UserDashboardShell

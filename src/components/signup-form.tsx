@@ -1,31 +1,26 @@
 import { useState } from "react";
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   Field,
   FieldDescription,
   FieldGroup,
   FieldLabel,
-} from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import { Link, useNavigate } from "react-router-dom"
-import AuthPopup from "@/components/comp-291"
-
-// MongoDB URI from environment variables
-const MONGODB_URI = import.meta.env.VITE_MONGODB_URI || import.meta.env.MONGODB_URI || "";
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { Link, useNavigate } from "react-router-dom";
 
 export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
-  const [showPopup, setShowPopup] = useState(false);
 
   // Email validation regex
   const validateEmail = (email: string) => {
@@ -33,12 +28,13 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
     return re.test(String(email).toLowerCase());
   };
 
-  // ✅ Phone validator (Kenyan format)
+  // Phone validator (Kenyan format)
   const validatePhone = (phone: string) => {
-    if (phone.startsWith("+254")) {
-      return /^\+254\d{9}$/.test(phone);
-    } else if (phone.startsWith("07")) {
-      return /^07\d{8}$/.test(phone);
+    const cleanedPhone = phone.replace(/\s+/g, "");
+    if (cleanedPhone.startsWith("+254")) {
+      return /^\+254\d{9}$/.test(cleanedPhone);
+    } else if (cleanedPhone.startsWith("07")) {
+      return /^07\d{8}$/.test(cleanedPhone);
     }
     return false;
   };
@@ -56,19 +52,23 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
     const password = formData.get("password") as string;
     const confirmPassword = formData.get("confirm-password") as string;
 
-    // ✅ Email check
+    // Email check
     if (!validateEmail(email)) {
       setErrorMsg("Please enter a valid email address.");
       setLoading(false);
       return;
     }
 
-    // ✅ Phone validation
+    // Phone validation
     if (!validatePhone(phone)) {
       if (phone.startsWith("+254")) {
-        setErrorMsg("Invalid phone number. Format: +254712345678 (13 digits total).");
+        setErrorMsg(
+          "Invalid phone number. Format: +254712345678 (13 digits total)."
+        );
       } else if (phone.startsWith("07")) {
-        setErrorMsg("Invalid phone number. Format: 0712345678 (10 digits total).");
+        setErrorMsg(
+          "Invalid phone number. Format: 0712345678 (10 digits total)."
+        );
       } else {
         setErrorMsg("Phone number must start with +254 or 07.");
       }
@@ -76,7 +76,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
       return;
     }
 
-    // ✅ Password checks
+    // Password checks
     if (password.length < 8) {
       setErrorMsg("Password must be at least 8 characters.");
       setLoading(false);
@@ -89,10 +89,11 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
       return;
     }
 
-    // ✅ Proceed with backend API signup
+    // Proceed with backend API signup
     try {
-      const apiUrl = import.meta.env.VITE_API_URL;
-      const response = await fetch(`${apiUrl}/auth/signup`, {
+      const apiUrl =
+        import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+      const response = await fetch(`${apiUrl}/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -102,33 +103,50 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
           email,
           phone,
           password,
-          mongodbUri: MONGODB_URI, // MongoDB URI (typically used on backend)
+          confirmPassword,
+          // Removed mongodbUri - backend handles this
         }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        setErrorMsg(data.message || "Failed to create account. Please try again.");
+        setErrorMsg(
+          data.message || "Failed to create account. Please try again."
+        );
         setLoading(false);
         return;
       }
 
-      setSuccessMsg(
-        data.message || "Signup successful! Welcome to HomeHaven."
-      );
-      setShowPopup(true);
-      setLoading(false);
+      setSuccessMsg("Signup successful! Welcome to HomeHaven.");
+
+      // Store token and user data
+      if (data.data?.token) {
+        localStorage.setItem("token", data.data.token);
+        localStorage.setItem("user", JSON.stringify(data.data.user));
+      }
 
       // Navigate to dashboard after a short delay
       setTimeout(() => {
-        navigate("/dashboard");
+        const userRole = data.data?.user?.role;
+        if (userRole === "admin" || userRole === "super_admin") {
+          navigate("/admin/dashboard");
+        } else {
+          navigate("/user/dashboard");
+        }
       }, 2000);
     } catch (err) {
-      console.error(err);
-      setErrorMsg("An unexpected error occurred. Please check your connection and try again.");
+      console.error("Signup error:", err);
+      setErrorMsg(
+        "An unexpected error occurred. Please check your connection and try again."
+      );
       setLoading(false);
     }
+  };
+
+  const handleGoogleSignup = () => {
+    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+    window.location.href = `${apiUrl}/auth/google`;
   };
 
   return (
@@ -147,7 +165,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
               <p className="text-destructive text-sm text-center">{errorMsg}</p>
             </div>
           )}
-          {successMsg && !showPopup && (
+          {successMsg && (
             <div className="rounded-md bg-green-500/10 border border-green-500/20 p-3">
               <p className="text-green-600 dark:text-green-400 text-sm text-center">
                 {successMsg}
@@ -190,7 +208,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
                 id="phone"
                 name="phone"
                 type="tel"
-                placeholder="+254712345678"
+                placeholder="+254712345678 or 0712345678"
                 required
                 disabled={loading}
               />
@@ -242,6 +260,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
                 type="button"
                 disabled={loading}
                 className="w-full"
+                onClick={handleGoogleSignup}
               >
                 Sign up with Google
               </Button>
@@ -257,13 +276,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
             </Field>
           </FieldGroup>
         </form>
-
-        <AuthPopup
-          visible={showPopup}
-          title="Account created!"
-          message={successMsg || "Welcome to HomeHaven."}
-        />
       </CardContent>
     </Card>
-  )
+  );
 }
