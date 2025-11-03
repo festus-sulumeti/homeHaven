@@ -2,22 +2,16 @@ import React, { useEffect, useState } from 'react'
 import {
   ArrowRightLeftIcon,
   CalendarClockIcon,
-  CalendarX2Icon,
   ChartNoAxesCombinedIcon,
   ChartPieIcon,
   ChartSplineIcon,
   ClipboardListIcon,
   Clock9Icon,
-  FacebookIcon,
   HashIcon,
-  InstagramIcon,
   LanguagesIcon,
-  LinkedinIcon,
   SettingsIcon,
   SquareActivityIcon,
   TriangleAlertIcon,
-  TruckIcon,
-  TwitterIcon,
   Undo2Icon,
   UsersIcon
 } from 'lucide-react'
